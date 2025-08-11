@@ -106,6 +106,7 @@ class Account(db.Model, PersistentBase):
             "date_joined": self.date_joined.isoformat()
         }
 
+    
     def deserialize(self, data):
         """
         Deserializes a Account from a dictionary

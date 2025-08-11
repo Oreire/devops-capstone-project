@@ -8,7 +8,18 @@ from flask import jsonify, request, make_response, abort, url_for   # noqa: F401
 from service.models import Account
 from service.common import status  # HTTP Status Codes
 from . import app  # Import Flask application
-from service.models import db 
+from service.models import db
+from flask_api import status
+
+def test_account_not_found(self):
+    """It should return 404 when Account is not found"""
+    resp = self.client.get("/accounts/0")  # ID 0 is assumed not to exist
+    self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+
+
+from service.common.cli_commands import db_create
+app.cli.add_command(db_create)
 
 
 ############################################################
@@ -96,11 +107,16 @@ def get_account(account_id):
 ######################################################################
 # FLASK CLI COMMANDS
 ######################################################################
+
+
+@app.cli.command("db-create")
+
+
 @app.cli.command("db-create")
 def db_create():
     """Creates the database tables"""
     app.logger.info("Initializing database")
-    Account.init_db()  # Optional: use Account.init_db() if defined
+    db.create_all()
     print("Database created")
 
 
