@@ -1,12 +1,11 @@
 """
 CLI Command Extensions for Flask
 """
-import os
 from unittest import TestCase
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 from click.testing import CliRunner
-from service.common.cli_commands import db_create
-
+from flask.cli import ScriptInfo
+from service import app
 
 class TestFlaskCLI(TestCase):
     """Test Flask CLI Commands"""
@@ -14,10 +13,13 @@ class TestFlaskCLI(TestCase):
     def setUp(self):
         self.runner = CliRunner()
 
-    @patch('service.common.cli_commands.db')
-    def test_db_create(self, db_mock):
+    @patch("service.models.db.create_all")
+    def test_db_create(self, mock_create_all):
         """It should call the db-create command"""
-        db_mock.return_value = MagicMock()
-        with patch.dict(os.environ, {"FLASK_APP": "service:app"}, clear=True):
-            result = self.runner.invoke(db_create)
-            self.assertEqual(result.exit_code, 0)
+        mock_create_all.return_value = None
+        script_info = ScriptInfo(create_app=lambda: app)
+        result = self.runner.invoke(app.cli.commands["db-create"], obj=script_info)
+        print("CLI Output:\n", repr(result.output))  # 👈 Use repr to reveal hidden characters
+        self.assertEqual(result.exit_code, 0)
+        self.assertIn("Database created", result.output)
+
