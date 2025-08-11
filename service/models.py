@@ -6,12 +6,10 @@ All of the models are stored in this module
 import logging
 from datetime import date
 from flask_sqlalchemy import SQLAlchemy
-
-logger = logging.getLogger("flask.app")
-
 # Create the SQLAlchemy object to be initialized later in init_db()
 db = SQLAlchemy()
 
+logger = logging.getLogger("flask.app")
 
 class DataValidationError(Exception):
     """Used for an data validation errors when deserializing"""
@@ -108,6 +106,7 @@ class Account(db.Model, PersistentBase):
             "date_joined": self.date_joined.isoformat()
         }
 
+    
     def deserialize(self, data):
         """
         Deserializes a Account from a dictionary
